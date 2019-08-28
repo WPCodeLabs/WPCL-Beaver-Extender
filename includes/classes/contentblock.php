@@ -18,11 +18,16 @@ class ContentBlock extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Action
 	 * @return array
 	 */
 	public function get_actions() {
-		return array(
-			array( 'init' => 'register_post_type' ),
-			array( 'contentblock' => 'do_content_block' ),
-			array( 'edit_form_after_title' => 'after_title_message' ),
-		);
+		if( Utilities::get_settings( 'disable_content_block', '' ) != 1 ) {
+			return array(
+				array( 'init' => 'register_post_type' ),
+				array( 'contentblock' => 'do_content_block' ),
+				array( 'edit_form_after_title' => 'after_title_message' ),
+			);
+		} else {
+			return array();
+		}
+
 	}
 
 	/**
@@ -30,9 +35,14 @@ class ContentBlock extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Action
 	 * @return array
 	 */
 	public static function get_shortcodes() {
-		return array(
-			array( 'contentblock' => 'shortcode' ),
-		);
+		if( Utilities::get_settings( 'disable_content_block', '' ) != 1 ) {
+			return array(
+				array( 'contentblock' => 'shortcode' ),
+			);
+		} else {
+			return array();
+		}
+
 	}
 
 	/**
@@ -74,7 +84,7 @@ class ContentBlock extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Action
 		    'hierarchical'          => true,
 		    'public'                => true,
 		    'show_ui'               => true,
-		    'show_in_menu'          => 'themes.php',
+		    'show_in_menu'          => true,
 		    'menu_position'         => 20,
 		    'menu_icon'             => 'dashicons-text',
 		    'show_in_admin_bar'     => true,
@@ -87,7 +97,9 @@ class ContentBlock extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Action
 		    'rewrite'               => $rewrite,
 		);
 
-		register_post_type( 'contentblock', $args );
+		if( Utilities::get_settings( 'disable_content_block', '' ) != 1 ) {
+			register_post_type( 'contentblock', $args );
+		}
 	}
 
 	public function after_title_message() {
@@ -117,16 +129,29 @@ class ContentBlock extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Action
 
 		// Maybe use beaver builder...
 		if( get_post_meta( $id, '_fl_builder_enabled', true ) === '1' && class_exists( 'FLBuilder' ) ) {
+			if( \FLBuilderModel::is_builder_active() && get_the_id() !== $id ) {
+				echo '<div class="content-block-fledit-wrap">';
+				printf( '<a href="%s?fl_builder" class="content-block-fledit" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path></svg></a>', get_post_permalink($id) );
+				echo '</div>';
+			}
 			// ob_start();
 			\FLBuilder::render_query( array(
 			    'post_type' => 'contentblock',
 			    'p'         => $id,
 			) );
+
+
 		}
 
 		// Else default behavior
 		else {
 			echo apply_filters( 'the_content', $block->post_content );
 		}
+
+
+
+		// echo get_edit_post_link( $id );
+
+		// echo get_post_permalink($id);
 	}
 }

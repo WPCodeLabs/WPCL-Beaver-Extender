@@ -32,49 +32,75 @@ class Spacing extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Filter_Hook
 	 */
 	public function extend_settings_form( $form, $id ) {
 
-		if( $id !== 'module_advanced' ) {
-			return $form;
+		if( $id === 'col' ) {
+			$form['tabs']['advanced'][ 'sections' ][ 'margins' ][ 'fields' ]['max_width'] = array(
+				'type'         => 'unit',
+				'label'         => __( 'Max Width', 'wpcl_beaver_extender' ),
+				'units'	       => array( 'px', 'vw', '%' ),
+				'default_unit' => 'px', // Optional
+				'responsive'  => true,
+				'preview'         => array(
+					'type'            => 'refresh',
+				),
+			);
+
+			$form['tabs']['advanced'][ 'sections' ][ 'margins' ][ 'fields' ]['max_width_alignment'] = array(
+				'type'          => 'select',
+				'label'         => __( 'Node Alignment', 'wpcl_beaver_extender' ),
+				'default'       => 'center',
+				'responsive'  => true,
+				'options' 		=> array(
+					'left' 			=> __( 'Left', 'wpcl_beaver_extender' ),
+					'center' 			=> __( 'Center', 'wpcl_beaver_extender' ),
+					'right' 			=> __( 'Right', 'wpcl_beaver_extender' ),
+				),
+				'preview'         => array(
+					'type'            => 'refresh',
+				),
+			);
 		}
 
-		$form[ 'sections' ][ 'margins' ][ 'fields' ]['be_padding'] = array(
-			'type'         => 'dimension',
-			'label'         => __( 'Padding', 'wpcl_beaver_extender' ),
-			'units'	       => array( 'px', 'em', 'rem', '%' ),
-			'default_unit' => 'px', // Optional
-			'responsive'  => true,
-			'slider'      => true,
-			'preview' => array(
-				'type'     => 'css',
-				'selector' => '.fl-module-content',
-				'property' => 'padding',
-			),
-		);
+		else if( $id === 'module_advanced' ) {
+			$form[ 'sections' ][ 'margins' ][ 'fields' ]['be_padding'] = array(
+				'type'         => 'dimension',
+				'label'         => __( 'Padding', 'wpcl_beaver_extender' ),
+				'units'	       => array( 'px', 'em', 'rem', '%' ),
+				'default_unit' => 'px', // Optional
+				'responsive'  => true,
+				'slider'      => true,
+				'preview' => array(
+					'type'     => 'css',
+					'selector' => '.fl-module-content',
+					'property' => 'padding',
+				),
+			);
 
-		$form[ 'sections' ][ 'margins' ][ 'fields' ]['max_width'] = array(
-			'type'         => 'unit',
-			'label'         => __( 'Max Width', 'wpcl_beaver_extender' ),
-			'units'	       => array( 'px', 'vw', '%' ),
-			'default_unit' => 'px', // Optional
-			'responsive'  => true,
-			'preview'         => array(
-				'type'            => 'refresh',
-			),
-		);
+			$form[ 'sections' ][ 'margins' ][ 'fields' ]['max_width'] = array(
+				'type'         => 'unit',
+				'label'         => __( 'Max Width', 'wpcl_beaver_extender' ),
+				'units'	       => array( 'px', 'vw', '%' ),
+				'default_unit' => 'px', // Optional
+				'responsive'  => true,
+				'preview'         => array(
+					'type'            => 'refresh',
+				),
+			);
 
-		$form[ 'sections' ][ 'margins' ][ 'fields' ]['max_width_alignment'] = array(
-			'type'          => 'select',
-			'label'         => __( 'Node Alignment', 'wpcl_beaver_extender' ),
-			'default'       => 'center',
-			'responsive'  => true,
-			'options' 		=> array(
-				'left' 			=> __( 'Left', 'wpcl_beaver_extender' ),
-				'center' 			=> __( 'Center', 'wpcl_beaver_extender' ),
-				'right' 			=> __( 'Right', 'wpcl_beaver_extender' ),
-			),
-			'preview'         => array(
-				'type'            => 'refresh',
-			),
-		);
+			$form[ 'sections' ][ 'margins' ][ 'fields' ]['max_width_alignment'] = array(
+				'type'          => 'select',
+				'label'         => __( 'Node Alignment', 'wpcl_beaver_extender' ),
+				'default'       => 'center',
+				'responsive'  => true,
+				'options' 		=> array(
+					'left' 			=> __( 'Left', 'wpcl_beaver_extender' ),
+					'center' 			=> __( 'Center', 'wpcl_beaver_extender' ),
+					'right' 			=> __( 'Right', 'wpcl_beaver_extender' ),
+				),
+				'preview'         => array(
+					'type'            => 'refresh',
+				),
+			);
+		}
 
 		return $form;
 	}
@@ -123,6 +149,7 @@ class Spacing extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Filter_Hook
 						$alignment_rules = array(
 							'center' => 'margin-left: auto; margin-right: auto;',
 							'right' => 'margin-left: auto; margin-right: 0;',
+							'left' => 'margin-left: 0; margin-right: auto;',
 						);
 
 						$style = '';
@@ -132,8 +159,19 @@ class Spacing extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Filter_Hook
 						 */
 						if( !empty( $module->settings->max_width ) ) {
 
-							$style .= sprintf( '.fl-node-%s { max-width: %s%s;',
-								$module->node,
+							$selector = '';
+
+							switch ( $module->type ) {
+								case 'column':
+									$selector = sprintf( '.fl-node-%s > .fl-col-content', $module->node );
+									break;
+								default:
+									$selector = sprintf( '.fl-node-%s', $module->node );
+									break;
+							}
+
+							$style .= sprintf( '%s { max-width: %s%s;',
+								$selector,
 								$module->settings->max_width,
 								$module->settings->max_width_unit
 							);
@@ -151,8 +189,8 @@ class Spacing extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Filter_Hook
 
 							$style .= sprintf( '@media (max-width: %spx){', $global_settings->medium_breakpoint );
 
-							$style .= sprintf( '.fl-node-%s { max-width: %s%s;',
-								$module->node,
+							$style .= sprintf( '%s { max-width: %s%s;',
+								$selector,
 								$module->settings->max_width_medium,
 								$module->settings->max_width_medium_unit
 							);
@@ -170,8 +208,8 @@ class Spacing extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Filter_Hook
 
 							$style .= sprintf( '@media (max-width: %spx){', $global_settings->responsive_breakpoint );
 
-							$style .= sprintf( '.fl-node-%s { max-width: %s%s;',
-								$module->node,
+							$style .= sprintf( '%s { max-width: %s%s;',
+								$selector,
 								$module->settings->max_width_responsive,
 								$module->settings->max_width_responsive_unit
 							);

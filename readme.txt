@@ -4,7 +4,7 @@ Donate link: https://www.wpcodelabs.com
 Tags: beaver builder, beaver builder addon
 Requires at least: 4.0.1
 Requires PHP: 5.6
-Tested up to: 5.1.1
+Tested up to: 5.2.2
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -57,6 +57,13 @@ It also extends all core elements (rows/columns) and modules to allow custom css
 
 
 == Changelog ==
+
+= 1.1.7 =
+- Small style update for buttons module
+
+= 1.1.5 =
+- Updated gravity forms modules to allow field values
+- Moved content blocks out of appearence tabs, so editors can view
 
 = 1.1.3 =
 - Updated button styles to prevent accidental override

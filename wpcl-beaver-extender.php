@@ -11,7 +11,7 @@
  * Plugin Name: WPCL Beaver Extender
  * Plugin URI:  https://www.wpcodelabs.com/
  * Description: Extend the Beaver Builder page builder with additional modules
- * Version:     1.1.5
+ * Version:     1.1.7
  * Author:      WP Code Labs
  * Author URI: https://www.wpcodelabs.com/
  * License:     GPL-2.0+

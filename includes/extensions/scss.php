@@ -18,11 +18,15 @@ class Scss extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Filter_Hook_Su
 	 * @return array
 	 */
 	public function get_filters() {
-		return array(
-			array( 'fl_builder_register_settings_form' => array( 'extend_settings_form' , 10, 2 ) ),
-			array( 'fl_builder_render_css' => array( 'render_css', 10, 4 ) ),
-			array( 'fl_builder_custom_fields' => 'register_field' ),
-		);
+		if( Utilities::get_settings( 'disable_scss', '' ) != 1 ) {
+			return array(
+				array( 'fl_builder_register_settings_form' => array( 'extend_settings_form' , 10, 2 ) ),
+				array( 'fl_builder_render_css' => array( 'render_css', 10, 4 ) ),
+				array( 'fl_builder_custom_fields' => 'register_field' ),
+			);
+		} else {
+			return array();
+		}
 	}
 
 	/**
@@ -30,9 +34,13 @@ class Scss extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Filter_Hook_Su
 	 * @return array
 	 */
 	public function get_actions() {
-		return array(
-			array( 'wp_enqueue_scripts' => 'enqueue_scripts' ),
-		);
+		if( Utilities::get_settings( 'disable_scss', '' ) != 1 ) {
+			return array(
+				array( 'wp_enqueue_scripts' => 'enqueue_scripts' ),
+			);
+		} else {
+			return array();
+		}
 	}
 
 	public function enqueue_scripts() {

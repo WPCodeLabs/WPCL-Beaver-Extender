@@ -24,9 +24,9 @@ class Widgets extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Action_Hook
 	}
 
 	public function add_widgets() {
-
-		register_widget( '\\Wpcl\\Be\\Classes\\Widgets\\ContentBlock' );
-
+		if( Utilities::get_settings( 'disable_content_block', '' ) != 1 ) {
+			register_widget( '\\Wpcl\\Be\\Classes\\Widgets\\ContentBlock' );
+		}
 	}
 
 } // end class

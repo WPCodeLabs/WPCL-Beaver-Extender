@@ -3,16 +3,19 @@
   "version": "1.0.0",
   "description": "WPCL Beaver Extender Plugin",
   "main": "src/scripts/public.js",
+  "directories": {
+    "lib": "lib"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/WPCodeLabs/WPCL-Beaver-Extender"
+    "url": "git+https://bitbucket.org/midwestdigitalmarketing/vegas-club.git"
   },
-  "author": "WP Code Labs",
+  "author": "Mid-West Digital Marketing",
   "license": "GPL-2.0",
-  "homepage": "https://www.wpcodelabs.com",
+  "homepage": "https://bitbucket.org/midwestdigitalmarketing/vegas-club#readme",
   "devDependencies": {
     "@babel/core": "^7.3.4",
     "@wordpress/babel-preset-default": "^3.0.2",

@@ -32,6 +32,7 @@ class Admin extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Action_Hook_S
 	public function get_filters() {
 		return array(
 			array( 'fl_builder_admin_settings_nav_items' => 'add_bb_settings_nav' ),
+			array( 'update_option_wpcl_beaver_extender' => 'update_permalinks' ),
 		);
 	}
 
@@ -63,6 +64,18 @@ class Admin extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Action_Hook_S
 					'solorized-light' => __( 'solorized light', 'wpcl_beaver_extender' ),
 					'tomorrow-night' => __( 'Tomorrow Night', 'wpcl_beaver_extender' ),
 				),
+			),
+			'disable_content_block' => array(
+				'type'  => 'checkbox',
+				'label' => __( 'Disable Content Blocks', 'wpcl_beaver_extender' ),
+			),
+			'disable_scss' => array(
+				'type'  => 'checkbox',
+				'label' => __( 'Disable Custom SCSS', 'wpcl_beaver_extender' ),
+			),
+			'disable_seperators' => array(
+				'type'  => 'checkbox',
+				'label' => __( 'Disable Seperators', 'wpcl_beaver_extender' ),
 			),
 
 		);
@@ -123,6 +136,13 @@ class Admin extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Action_Hook_S
 			) );
 		}
 
+		else if( $args['field']['type'] === 'checkbox' ) {
+			printf( '<input type="checkbox" name="%1$s" id="%1$s" class="widefat" value="1" %2$s/>',
+				"wpcl_beaver_extender[{$args['key']}]",
+				checked( $args['value'], 1, false )
+			);
+		}
+
 		else {
 			Utilities::markup( array(
 				'open'    => '<input %s/>',
@@ -133,6 +153,7 @@ class Admin extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Action_Hook_S
 					'name'  => sprintf( '%s[%s]', self::$name, $args['key'] ),
 					'id'    => sprintf( '%s[%s]', self::$name, $args['key'] ),
 					'value' => $args['value'],
+					'type' => 'text'
 				),
 			) );
 		}
@@ -187,6 +208,12 @@ class Admin extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Action_Hook_S
 			'close' => '</div>',
 			'context' => 'fl-settings-form',
 		) );
+	}
+
+	public function update_permalinks( ) {
+		global $wp_rewrite;
+		$wp_rewrite->init();
+		$wp_rewrite->flush_rules();
 	}
 
 } // end class

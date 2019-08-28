@@ -26,7 +26,7 @@ class Plugin {
 	 * @access protected
 	 * @var (string) $version : The version number of the plugin, used to version scripts / styles
 	 */
-	public static $version = '1.1.5';
+	public static $version = '1.1.7';
 
 	/**
 	 * Plugin Options
@@ -120,6 +120,7 @@ class Plugin {
 			'Admin',
 			'ContentBlock',
 			'Widgets',
+			'Frontend',
 		);
 
 		/**

@@ -90,21 +90,49 @@ class BEGravityForms extends \FLBuilderModule implements \Wpcl\Be\Interfaces\Act
 			return;
 		}
 
+		$field_values = array();
+
+		if( !empty( $settings->field_values ) ) {
+			foreach( $settings->field_values as $field ) {
+				$field_values[$field->field_name] = $field->field_value;
+			}
+		}
+
 		/**
 		 * If our form exists and is active
 		 * gravity_form( $id_or_title, $display_title = true, $display_description = true, $display_inactive = false, $field_values = null, $ajax = false, $tabindex, $echo = true );
 		 */
 		if( \GFAPI::get_form( $settings->form_id ) ) {
-			gravity_form(
-				$settings->form_id,
-				filter_var( $settings->display_title, FILTER_VALIDATE_BOOLEAN ),
-				filter_var( $settings->display_description, FILTER_VALIDATE_BOOLEAN ),
-				false,
-				null,
-				filter_var( $settings->enable_ajax, FILTER_VALIDATE_BOOLEAN ),
-				$settings->tab_index,
-				true
-			);
+
+			$atts  = '';
+
+			$atts .= !empty( $settings->form_id ) ? " id='{$settings->form_id}'" : '';
+
+			$atts .= !empty( $settings->display_title ) ? " title='{$settings->display_title}'" : '';
+
+			$atts .= !empty( $settings->display_description ) ? " description='{$settings->display_description}'" : '';
+
+			$atts .= !empty( $settings->enable_ajax ) ? " ajax='{$settings->enable_ajax}'" : '';
+
+			$atts .= !empty( $settings->tab_index ) ? " tabindex='{$settings->tab_index}'" : '';
+
+			if( !empty( $settings->field_values ) ) {
+
+				$field_vals = '';
+
+				foreach( $settings->field_values as  $index => $field ) {
+
+					$field_vals .= $index !== 0 ? '&' : '';
+
+					$field_vals .= $field->field_name . '=' . $field->field_value;
+
+				}
+
+				$atts .= " field_values='{$field_vals}'";
+			}
+
+			echo do_shortcode( "[gravityform {$atts}]" );
+
 		}
 		/**
 		 * Else default message
@@ -280,6 +308,13 @@ class BEGravityForms extends \FLBuilderModule implements \Wpcl\Be\Interfaces\Act
 								'maxlength'     => '5',
 								'size'          => '5',
 							),
+							'field_values'         => array(
+								'type'          => 'form',
+								'label'         => __( 'Field Values', 'wpcl_beaver_extender' ),
+								'form'          => 'begravityforms_field_values', // ID from registered form below
+								'preview_text'  => 'field_name', // Name of a field to use for the preview text
+								'multiple'      => true,
+							),
 						),
 					),
 				),
@@ -431,6 +466,38 @@ class BEGravityForms extends \FLBuilderModule implements \Wpcl\Be\Interfaces\Act
 								'show_alpha'    => true,
 								'preview'       => array(
 									'type'          => 'refresh',
+								),
+							),
+						),
+					),
+				),
+			),
+		));
+		/**
+		 * Register a settings form to use in the "form" field type above.
+		 */
+		\FLBuilder::register_settings_form( 'begravityforms_field_values' , array(
+			'title' => __( 'Add Field Value', 'wpcl_beaver_extender' ),
+			'tabs'  => array(
+				'general'       => array( // Tab
+					'title'         => __( 'General', 'wpcl_beaver_extender' ), // Tab title
+					'sections'      => array( // Tab Sections
+						'general'       => array( // Section
+							'title'         => '', // Section Title
+							'fields'        => array( // Section Fields
+								'field_name'         => array(
+									'type'          => 'text',
+									'label'         => __( 'Field Name', 'wpcl_beaver_extender' ),
+									'default'       => '',
+									'description'   => __( 'The name of the field to dynamically populate', 'wpcl_beaver_extender' ),
+									'help'          => __( 'The name of the field to dynamically populate', 'wpcl_beaver_extender' )
+								),
+								'field_value' => array(
+									'type'          => 'text',
+									'label'         => __( 'Field Value', 'wpcl_beaver_extender' ),
+									'default'       => '',
+									'description'   => __( 'The value of the field to dynamically populate', 'wpcl_beaver_extender' ),
+									'help'          => __( 'The value of the field to dynamically populate', 'wpcl_beaver_extender' )
 								),
 							),
 						),

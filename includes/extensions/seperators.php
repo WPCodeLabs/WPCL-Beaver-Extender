@@ -18,10 +18,14 @@ class Seperators extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Filter_H
 	 * @return array
 	 */
 	public function get_filters() {
-		return array(
-			array( 'fl_builder_register_settings_form' => array( 'extend_settings' , 10, 2 ) ),
-			array( 'fl_builder_render_css' => array( 'extend_css', 10, 4 ) ),
-		);
+		if( Utilities::get_settings( 'disable_seperators', '' ) != 1 ) {
+			return array(
+				array( 'fl_builder_register_settings_form' => array( 'extend_settings' , 10, 2 ) ),
+				array( 'fl_builder_render_css' => array( 'extend_css', 10, 4 ) ),
+			);
+		} else {
+			return array();
+		}
 	}
 
 	/**
@@ -29,13 +33,17 @@ class Seperators extends \Wpcl\Be\Plugin implements \Wpcl\Be\Interfaces\Filter_H
 	 * @return array
 	 */
 	public function get_actions() {
-		return array(
-			array( 'init' => 'register_forms' ),
-			array( 'fl_builder_before_render_row_bg' => 'do_seperator' ),
-			array( 'fl_builder_after_render_row_bg' => 'do_seperator' ),
-			array( 'fl_builder_before_render_modules' => array( 'do_column_seperator', 10, 2 ) ),
-			array( 'fl_builder_after_render_modules' => array( 'do_column_seperator', 10, 2 ) ),
-		);
+		if( Utilities::get_settings( 'disable_seperators', '' ) != 1 ) {
+			return array(
+				array( 'init' => 'register_forms' ),
+				array( 'fl_builder_before_render_row_bg' => 'do_seperator' ),
+				array( 'fl_builder_after_render_row_bg' => 'do_seperator' ),
+				array( 'fl_builder_before_render_modules' => array( 'do_column_seperator', 10, 2 ) ),
+				array( 'fl_builder_after_render_modules' => array( 'do_column_seperator', 10, 2 ) ),
+			);
+		} else {
+			return array();
+		}
 	}
 
 	public function do_seperator( $module ) {

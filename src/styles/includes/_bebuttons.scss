@@ -59,11 +59,18 @@ input[type="submit"].be-button {
 			padding-left: .809em;
 			padding-right: 1.809em;
 		}
+		.be-button-icon {
+			transition: unset !important;
+			&:before,
+			&:after {
+				transition: unset !important;
+			}
+		}
 	}
 	&.animated-icon {
 		.be-button-icon {
 			display: inline-block;
-			transition: transform 0.25s ease-out, opacity 0.25s ease;
+			transition: transform 0.25s ease-out, opacity 0.25s ease !important;
 			opacity: 0;
 
 		}
